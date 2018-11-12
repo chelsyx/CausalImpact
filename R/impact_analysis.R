@@ -216,7 +216,8 @@ CausalImpact <- function(data = NULL,
                          bsts.model = NULL,
                          post.period.response = NULL,
                          alpha = 0.05,
-                         UnStandardize = identity) {
+                         UnStandardize = identity,
+                         log_transformed = FALSE) {
   # CausalImpact() performs causal inference through counterfactual
   # predictions using a Bayesian structural time-series model.
   #
@@ -359,7 +360,7 @@ CausalImpact <- function(data = NULL,
     impact$model$pre.period <- times[pre.period]
     impact$model$post.period <- times[post.period]
   } else {
-    impact <- RunWithBstsModel(bsts.model, post.period.response, alpha, UnStandardize)
+    impact <- RunWithBstsModel(bsts.model, post.period.response, alpha, UnStandardize, log_transformed)
   }
 
   return(impact)
@@ -455,7 +456,7 @@ RunWithData <- function(data, pre.period, post.period, model.args, alpha) {
   return(impact)
 }
 
-RunWithBstsModel <- function(bsts.model, post.period.response, alpha = 0.05, UnStandardize) {
+RunWithBstsModel <- function(bsts.model, post.period.response, alpha = 0.05, UnStandardize, log_transformed = FALSE) {
   # Runs an impact analysis on top of a fitted bsts model.
   #
   # Args:
@@ -483,7 +484,8 @@ RunWithBstsModel <- function(bsts.model, post.period.response, alpha = 0.05, UnS
                                            y.cf = post.period.response,
                                            post.period = indices$post.period,
                                            alpha = alpha,
-                                           UnStandardize)
+                                           UnStandardize,
+                                           log_transformed)
 
   # Assign response-variable names
   # N.B. The modeling period comprises everything found in bsts, so the actual

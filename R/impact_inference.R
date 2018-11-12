@@ -506,7 +506,7 @@ CheckInputForCompilePosteriorInferences <- function(bsts.model, y.cf,
 }
 
 CompilePosteriorInferences <- function(bsts.model, y.cf, post.period,
-                                       alpha = 0.05, UnStandardize = identity) {
+                                       alpha = 0.05, UnStandardize = identity, log_transformed = FALSE) {
   # Takes in a fitted \code{bsts} model and computes the posterior predictive
   # distributions, over time, for the counterfactual response and the causal
   # effect.
@@ -547,6 +547,13 @@ CompilePosteriorInferences <- function(bsts.model, y.cf, post.period,
   y.samples <- UnStandardize(y.samples)
   point.pred <- UnStandardize(point.pred)
   y.model <- UnStandardize(bsts.model$original.series)
+
+  # Undo log transformation (if any)
+  if (log_transformed) {
+    y.samples <- exp(y.samples)
+    point.pred <- exp(point.pred)
+    y.model <- exp(y.model)
+  }
 
   # Reconstruct full original series
   indices <- seq_along(y.model)
